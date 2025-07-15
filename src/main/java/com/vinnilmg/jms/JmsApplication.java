@@ -7,6 +7,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -17,7 +18,6 @@ public class JmsApplication {
         SpringApplication.run(JmsApplication.class, args);
         initConsumer();
     }
-
 
     private static void initConsumer() throws NamingException, JMSException {
         final var context = new InitialContext();
@@ -30,15 +30,23 @@ public class JmsApplication {
                 final var queue = (Destination) context.lookup("financeiro");
                 final var consumer = session.createConsumer(queue);
 
-                final var message = consumer.receive();
-                System.out.println("Mensagem recebida: " + message);
+                consumer.setMessageListener(message -> {
+                    final var textMessage = (TextMessage) message;
+                    try {
+                        System.out.println("Mensagem recebida: " + textMessage.getText());
+                    } catch (JMSException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
-/*				Thread.sleep(100000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);*/
+                try {
+                    Thread.sleep(100000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
 
-        context.close();
+            context.close();
+        }
     }
 }
