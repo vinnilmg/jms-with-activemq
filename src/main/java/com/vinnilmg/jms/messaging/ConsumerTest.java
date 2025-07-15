@@ -21,6 +21,7 @@ public class ConsumerTest {
                     final var session = createSession(connection);
                     final var consumer = createConsumer(context, session)
             ) {
+                System.out.println("Conectado...");
                 consumer.setMessageListener(message -> {
                     final var textMessage = (TextMessage) message;
                     try {
