@@ -25,7 +25,7 @@ public class JmsApplication {
         // Topic
         TopicProducerTest.initProducer();
 
-        final var executor = Executors.newFixedThreadPool(3);
+        final var executor = Executors.newFixedThreadPool(2);
         executor.submit(new TopicConsumerEstoqueTest());
         executor.submit(new TopicConsumerComercialTest());
     }
