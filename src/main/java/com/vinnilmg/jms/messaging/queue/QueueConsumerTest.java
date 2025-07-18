@@ -1,15 +1,15 @@
-package com.vinnilmg.jms.messaging;
+package com.vinnilmg.jms.messaging.queue;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.naming.NamingException;
 
 import static com.vinnilmg.jms.messaging.MessagingUtils.createConnection;
-import static com.vinnilmg.jms.messaging.MessagingUtils.createConsumer;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createContext;
+import static com.vinnilmg.jms.messaging.MessagingUtils.createQueueConsumer;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createSession;
 
-public class ConsumerTest {
+public class QueueConsumerTest {
 
     public static void initConsumer() throws NamingException, JMSException {
         final var context = createContext();
@@ -19,13 +19,13 @@ public class ConsumerTest {
 
             try (
                     final var session = createSession(connection);
-                    final var consumer = createConsumer(context, session)
+                    final var consumer = createQueueConsumer(context, session)
             ) {
                 System.out.println("Conectado...");
                 consumer.setMessageListener(message -> {
                     final var textMessage = (TextMessage) message;
                     try {
-                        System.out.println("Mensagem recebida: " + textMessage.getText());
+                        System.out.println("Mensagem recebida na QUEUE: " + textMessage.getText());
                     } catch (JMSException e) {
                         throw new RuntimeException(e);
                     }

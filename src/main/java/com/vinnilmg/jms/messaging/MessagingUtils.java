@@ -7,10 +7,13 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.Topic;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 public class MessagingUtils {
+    private static final String QUEUE_NAME = "financeiro";
+    private static final String TOPIC_NAME = "loja";
 
     public static InitialContext createContext() {
         try {
@@ -30,7 +33,15 @@ public class MessagingUtils {
 
     public static Destination createQueueDestination(final InitialContext context) {
         try {
-            return (Destination) context.lookup("financeiro");
+            return (Destination) context.lookup(QUEUE_NAME);
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Topic createTopicDestination(final InitialContext context) {
+        try {
+            return (Topic) context.lookup(TOPIC_NAME);
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }
@@ -45,6 +56,19 @@ public class MessagingUtils {
         }
     }
 
+    public static Connection createConnection(
+            final InitialContext context,
+            final String consumerName
+    ) {
+        try {
+            final var connection = createConnection(context);
+            connection.setClientID(consumerName);
+            return connection;
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static Session createSession(final Connection connection) {
         try {
             return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -53,7 +77,7 @@ public class MessagingUtils {
         }
     }
 
-    public static MessageConsumer createConsumer(final InitialContext context, final Session session) {
+    public static MessageConsumer createQueueConsumer(final InitialContext context, final Session session) {
         try {
             final var queue = createQueueDestination(context);
             return session.createConsumer(queue);
@@ -62,10 +86,32 @@ public class MessagingUtils {
         }
     }
 
-    public static MessageProducer createProducer(final InitialContext context, final Session session) {
+    public static MessageConsumer createTopicConsumer(
+            final InitialContext context,
+            final Session session,
+            final String subscriberName
+    ) {
+        try {
+            final var topic = createTopicDestination(context);
+            return session.createDurableSubscriber(topic, subscriberName);
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static MessageProducer createQueueProducer(final InitialContext context, final Session session) {
         try {
             final var queue = createQueueDestination(context);
             return session.createProducer(queue);
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static MessageProducer createTopicProducer(final InitialContext context, final Session session) {
+        try {
+            final var topic = createTopicDestination(context);
+            return session.createProducer(topic);
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }
