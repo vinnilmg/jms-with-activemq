@@ -7,7 +7,7 @@ import javax.naming.NamingException;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createConnection;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createContext;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createSession;
-import static com.vinnilmg.jms.messaging.MessagingUtils.createTopicConsumer;
+import static com.vinnilmg.jms.messaging.MessagingUtils.createTopicConsumerWithMessageSelector;
 
 public class TopicConsumerEstoqueTest implements Runnable {
     private static final String TOPIC_CONSUMER = "estoque";
@@ -33,7 +33,7 @@ public class TopicConsumerEstoqueTest implements Runnable {
 
             try (
                     final var session = createSession(connection);
-                    final var consumer = createTopicConsumer(context, session, TOPIC_SUBSCRIBER)
+                    final var consumer = createTopicConsumerWithMessageSelector(context, session, TOPIC_SUBSCRIBER)
             ) {
                 System.out.println(String.format("[ESTOQUE][%s] Conectado...", currentThread.getName()));
                 consumer.setMessageListener(message -> {

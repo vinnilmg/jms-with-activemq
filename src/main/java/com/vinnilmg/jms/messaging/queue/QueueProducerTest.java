@@ -8,6 +8,7 @@ import static com.vinnilmg.jms.messaging.MessagingUtils.createConnection;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createContext;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createQueueProducer;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createSession;
+import static com.vinnilmg.jms.messaging.MessagingUtils.createTextMessage;
 
 public class QueueProducerTest {
 
@@ -26,7 +27,7 @@ public class QueueProducerTest {
                 IntStream.range(0, 100)
                         .forEach(i -> {
                             try {
-                                final var message = session.createTextMessage("Hello World - " + i);
+                                final var message = createTextMessage(session, "Hello World - " + i);
                                 producer.send(message);
                             } catch (JMSException e) {
                                 throw new RuntimeException(e);

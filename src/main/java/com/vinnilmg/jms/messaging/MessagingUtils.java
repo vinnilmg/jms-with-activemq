@@ -7,6 +7,7 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -99,6 +100,24 @@ public class MessagingUtils {
         }
     }
 
+    public static MessageConsumer createTopicConsumerWithMessageSelector(
+            final InitialContext context,
+            final Session session,
+            final String subscriberName
+    ) {
+        try {
+            final var topic = createTopicDestination(context);
+            return session.createDurableSubscriber(
+                    topic,
+                    subscriberName,
+                    "ebook is null OR ebook=false", // Exemplo de message selector
+                    false
+            );
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static MessageProducer createQueueProducer(final InitialContext context, final Session session) {
         try {
             final var queue = createQueueDestination(context);
@@ -112,6 +131,15 @@ public class MessagingUtils {
         try {
             final var topic = createTopicDestination(context);
             return session.createProducer(topic);
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static TextMessage createTextMessage(final Session session, final String message) {
+        try {
+            System.out.println("Gerando mensagem...");
+            return session.createTextMessage(message);
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }

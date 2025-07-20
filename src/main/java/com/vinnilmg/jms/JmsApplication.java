@@ -14,19 +14,23 @@ import java.util.concurrent.Executors;
 
 @SpringBootApplication
 public class JmsApplication {
+    private static final boolean QUEUE_ACTIVE = false;
+    private static final boolean TOPIC_ACTIVE = true;
 
     public static void main(String[] args) throws NamingException, JMSException {
         SpringApplication.run(JmsApplication.class, args);
 
-        // Queue
-        QueueProducerTest.initProducer();
-        QueueConsumerTest.initConsumer();
+        if (QUEUE_ACTIVE) {
+            QueueProducerTest.initProducer();
+            QueueConsumerTest.initConsumer();
+        }
 
-        // Topic
-        TopicProducerTest.initProducer();
+        if (TOPIC_ACTIVE) {
+            TopicProducerTest.initProducer();
 
-        final var executor = Executors.newFixedThreadPool(2);
-        executor.submit(new TopicConsumerEstoqueTest());
-        executor.submit(new TopicConsumerComercialTest());
+            final var executor = Executors.newFixedThreadPool(2);
+            executor.submit(new TopicConsumerEstoqueTest());
+            executor.submit(new TopicConsumerComercialTest());
+        }
     }
 }

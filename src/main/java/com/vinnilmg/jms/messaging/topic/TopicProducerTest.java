@@ -6,6 +6,7 @@ import javax.naming.NamingException;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createConnection;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createContext;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createSession;
+import static com.vinnilmg.jms.messaging.MessagingUtils.createTextMessage;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createTopicProducer;
 
 public class TopicProducerTest {
@@ -20,8 +21,9 @@ public class TopicProducerTest {
                     final var session = createSession(connection);
                     final var producer = createTopicProducer(context, session)
             ) {
-                System.out.println("Publicando mensagem...");
-                final var message = session.createTextMessage("Hello World!");
+                final var isEbook = false;
+                final var message = createTextMessage(session, "Hello World com ebook = " + isEbook);
+                message.setBooleanProperty("ebook", isEbook); // Message Selector
                 producer.send(message);
             }
 
