@@ -15,6 +15,8 @@ import javax.naming.NamingException;
 public class MessagingUtils {
     private static final String QUEUE_NAME = "financeiro";
     private static final String TOPIC_NAME = "loja";
+    private static final String USERNAME = "user";
+    private static final String PASSWORD = "senha";
 
     public static InitialContext createContext() {
         try {
@@ -51,7 +53,7 @@ public class MessagingUtils {
     public static Connection createConnection(final InitialContext context) {
         try {
             final var factory = createFactory(context);
-            return factory.createConnection();
+            return factory.createConnection(USERNAME, PASSWORD);
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }
