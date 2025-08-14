@@ -27,6 +27,7 @@ public class JmsApplication {
 
         if (TOPIC_ACTIVE) {
             TopicProducerTest.initProducer();
+            TopicProducerTest.initProducerWithXML();
 
             final var executor = Executors.newFixedThreadPool(2);
             executor.submit(new TopicConsumerEstoqueTest());
