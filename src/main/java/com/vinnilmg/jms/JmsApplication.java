@@ -2,8 +2,8 @@ package com.vinnilmg.jms;
 
 import com.vinnilmg.jms.messaging.queue.QueueConsumerTest;
 import com.vinnilmg.jms.messaging.queue.QueueProducerTest;
-import com.vinnilmg.jms.messaging.topic.TopicConsumerComercialTest;
 import com.vinnilmg.jms.messaging.topic.TopicConsumerEstoqueTest;
+import com.vinnilmg.jms.messaging.topic.TopicConsumerToObjectMessageTest;
 import com.vinnilmg.jms.messaging.topic.TopicProducerTest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,10 +28,12 @@ public class JmsApplication {
         if (TOPIC_ACTIVE) {
             TopicProducerTest.initProducer();
             TopicProducerTest.initProducerWithXML();
+            TopicProducerTest.initProducerWithObjectMessage();
 
             final var executor = Executors.newFixedThreadPool(2);
             executor.submit(new TopicConsumerEstoqueTest());
-            executor.submit(new TopicConsumerComercialTest());
+            //executor.submit(new TopicConsumerComercialTest());
+            executor.submit(new TopicConsumerToObjectMessageTest());
         }
     }
 }

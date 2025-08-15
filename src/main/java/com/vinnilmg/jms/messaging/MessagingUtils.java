@@ -6,11 +6,13 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.io.Serializable;
 
 public class MessagingUtils {
     private static final String QUEUE_NAME = "financeiro";
@@ -112,7 +114,25 @@ public class MessagingUtils {
             return session.createDurableSubscriber(
                     topic,
                     subscriberName,
-                    "ebook is null OR ebook=false", // Exemplo de message selector
+                    "isObject is null OR isObject=false AND ebook is null OR ebook=false", // Exemplo de message selector
+                    false
+            );
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static MessageConsumer createTopicConsumerToObjectMessage(
+            final InitialContext context,
+            final Session session,
+            final String subscriberName
+    ) {
+        try {
+            final var topic = createTopicDestination(context);
+            return session.createDurableSubscriber(
+                    topic,
+                    subscriberName,
+                    "isObject=true", // Exemplo de message selector
                     false
             );
         } catch (JMSException e) {
@@ -142,6 +162,15 @@ public class MessagingUtils {
         try {
             System.out.println("Gerando mensagem...");
             return session.createTextMessage(message);
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ObjectMessage createObjectMessage(final Session session, final Serializable message) {
+        try {
+            System.out.println("Gerando mensagem de objeto...");
+            return session.createObjectMessage(message);
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }

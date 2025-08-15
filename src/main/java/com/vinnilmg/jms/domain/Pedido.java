@@ -80,4 +80,15 @@ public class Pedido implements Serializable {
     public void setItems(List<Item> items) {
         this.items = items;
     }
+
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "id=" + id +
+                ", createdDate=" + createdDate +
+                ", paymentDate=" + paymentDate +
+                ", total=" + total +
+                ", items=" + items +
+                '}';
+    }
 }
