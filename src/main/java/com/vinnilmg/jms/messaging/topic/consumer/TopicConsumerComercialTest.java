@@ -1,24 +1,22 @@
-package com.vinnilmg.jms.messaging.topic;
-
-import com.vinnilmg.jms.domain.Pedido;
+package com.vinnilmg.jms.messaging.topic.consumer;
 
 import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
 import javax.naming.NamingException;
 
 import static com.vinnilmg.jms.messaging.MessagingUtils.createConnection;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createContext;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createSession;
-import static com.vinnilmg.jms.messaging.MessagingUtils.createTopicConsumerToObjectMessage;
+import static com.vinnilmg.jms.messaging.MessagingUtils.createTopicConsumer;
 
-public class TopicConsumerToObjectMessageTest implements Runnable {
-    private static final String TOPIC_CONSUMER = "object-message";
-    private static final String TOPIC_SUBSCRIBER = "object-message-subscriber";
+public class TopicConsumerComercialTest implements Runnable {
+    private static final String TOPIC_CONSUMER = "comercial";
+    private static final String TOPIC_SUBSCRIBER = "comercial-subscriber";
 
     @Override
     public void run() {
         try {
-            initConsumerEstoque();
+            initConsumerComercial();
         } catch (JMSException e) {
             throw new RuntimeException(e);
         } catch (NamingException e) {
@@ -26,7 +24,7 @@ public class TopicConsumerToObjectMessageTest implements Runnable {
         }
     }
 
-    private static void initConsumerEstoque() throws JMSException, NamingException {
+    public static void initConsumerComercial() throws NamingException, JMSException {
         final var currentThread = Thread.currentThread();
         final var context = createContext();
 
@@ -35,14 +33,13 @@ public class TopicConsumerToObjectMessageTest implements Runnable {
 
             try (
                     final var session = createSession(connection);
-                    final var consumer = createTopicConsumerToObjectMessage(context, session, TOPIC_SUBSCRIBER)
+                    final var consumer = createTopicConsumer(context, session, TOPIC_SUBSCRIBER)
             ) {
-                System.out.println(String.format("[OBJECT_MESSAGE][%s] Conectado...", currentThread.getName()));
+                System.out.println(String.format("[COMERCIAL][%s] Conectado...", currentThread.getName()));
                 consumer.setMessageListener(message -> {
-                    final var objectMessage = (ObjectMessage) message;
+                    final var textMessage = (TextMessage) message;
                     try {
-                        final var pedido = (Pedido) objectMessage.getObject();
-                        System.out.println("[OBJECT_MESSAGE] Mensagem recebida: " + pedido);
+                        System.out.println("[COMERCIAL] Mensagem recebida: " + textMessage.getText());
                     } catch (JMSException e) {
                         throw new RuntimeException(e);
                     }

@@ -1,4 +1,4 @@
-package com.vinnilmg.jms.messaging.queue;
+package com.vinnilmg.jms.messaging.queue.producer;
 
 import javax.jms.JMSException;
 import javax.naming.NamingException;
@@ -24,7 +24,7 @@ public class QueueProducerTest {
             ) {
                 System.out.println("Publicando mensagem...");
 
-                IntStream.range(0, 100)
+                IntStream.range(0, 1)
                         .forEach(i -> {
                             try {
                                 final var message = createTextMessage(session, "Hello World - " + i);

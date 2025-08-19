@@ -1,17 +1,19 @@
-package com.vinnilmg.jms.messaging.topic;
+package com.vinnilmg.jms.messaging.topic.consumer;
+
+import com.vinnilmg.jms.domain.Pedido;
 
 import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import javax.jms.ObjectMessage;
 import javax.naming.NamingException;
 
 import static com.vinnilmg.jms.messaging.MessagingUtils.createConnection;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createContext;
 import static com.vinnilmg.jms.messaging.MessagingUtils.createSession;
-import static com.vinnilmg.jms.messaging.MessagingUtils.createTopicConsumerWithMessageSelector;
+import static com.vinnilmg.jms.messaging.MessagingUtils.createTopicConsumerToObjectMessage;
 
-public class TopicConsumerEstoqueTest implements Runnable {
-    private static final String TOPIC_CONSUMER = "estoque";
-    private static final String TOPIC_SUBSCRIBER = "estoque-subscriber";
+public class TopicConsumerToObjectMessageTest implements Runnable {
+    private static final String TOPIC_CONSUMER = "object-message";
+    private static final String TOPIC_SUBSCRIBER = "object-message-subscriber";
 
     @Override
     public void run() {
@@ -33,13 +35,14 @@ public class TopicConsumerEstoqueTest implements Runnable {
 
             try (
                     final var session = createSession(connection);
-                    final var consumer = createTopicConsumerWithMessageSelector(context, session, TOPIC_SUBSCRIBER)
+                    final var consumer = createTopicConsumerToObjectMessage(context, session, TOPIC_SUBSCRIBER)
             ) {
-                System.out.println(String.format("[ESTOQUE][%s] Conectado...", currentThread.getName()));
+                System.out.println(String.format("[OBJECT_MESSAGE][%s] Conectado...", currentThread.getName()));
                 consumer.setMessageListener(message -> {
-                    final var textMessage = (TextMessage) message;
+                    final var objectMessage = (ObjectMessage) message;
                     try {
-                        System.out.println("[ESTOQUE] Mensagem recebida: " + textMessage.getText());
+                        final var pedido = (Pedido) objectMessage.getObject();
+                        System.out.println("[OBJECT_MESSAGE] Mensagem recebida: " + pedido);
                     } catch (JMSException e) {
                         throw new RuntimeException(e);
                     }

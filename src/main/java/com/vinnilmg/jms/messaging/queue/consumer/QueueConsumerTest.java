@@ -1,4 +1,4 @@
-package com.vinnilmg.jms.messaging.queue;
+package com.vinnilmg.jms.messaging.queue.consumer;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;

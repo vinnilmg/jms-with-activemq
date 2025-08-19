@@ -74,12 +74,28 @@ public class MessagingUtils {
         }
     }
 
-    public static Session createSession(final Connection connection) {
+    public static Session createSession(
+            final Connection connection,
+            final boolean transacted,
+            final int ackMode
+    ) {
         try {
-            return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            return connection.createSession(transacted, ackMode);
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Session createSession(final Connection connection) {
+        return createSession(connection, false, Session.AUTO_ACKNOWLEDGE);
+    }
+
+    public static Session createSessionWithClientAck(final Connection connection) {
+        return createSession(connection, false, Session.CLIENT_ACKNOWLEDGE);
+    }
+
+    public static Session createSessionWithTransaction(final Connection connection) {
+        return createSession(connection, true, Session.SESSION_TRANSACTED);
     }
 
     public static MessageConsumer createQueueConsumer(final InitialContext context, final Session session) {
